@@ -1,0 +1,21 @@
+{
+    "name": "hmz/hm-zframe",
+    "description": "study",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Mr.z",
+            "email": "pkweng@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload":{
+        "files":[
+            "system/helper.php"
+        ],
+        "psr-4":{
+            "hmz\\":"hmz",
+            "app\\":"app"
+        }
+    }
+}
