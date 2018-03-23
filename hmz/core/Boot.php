@@ -62,9 +62,12 @@ class Boot
 			$c = 'index';
 			$a = 'index';
 		}
+		define ('MODULE',$m);
+		define ('CONTROLLER',strtolower ($c));
+		define ('ACTION',$a);
 		//(new \app\home\controller\IndexController())->index ()
 		//组装需要的路径，因为加入了命名空间的概念，所以现在需要将命名空间也组起来
 		$controller = '\app\\'.$m.'\controller\\'.ucfirst ($c).'Controller';
-		call_user_func_array ([new $controller,$a],[]);
+		echo call_user_func_array ([new $controller,$a],[]);
 	}
 }
