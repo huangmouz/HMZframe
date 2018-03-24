@@ -12,6 +12,7 @@ namespace app\home\controller;
 use hmz\core\Controller;
 use hmz\model\Model;
 use hmz\view\View;
+use system\model\Student;
 
 class IndexController extends Controller
 {
@@ -22,9 +23,14 @@ class IndexController extends Controller
 		//return View::make()->with();
 		//这里测试数据库的调用在hmz/model里
 		//Model::query();
-		$date = Model::query('select * from student');
-		p ($date);
-
+		//$date = Model::query('select * from student');
+		//p ($date);
+		//p(c ());
+		//p (c('database'));
+		//p (c('database.DB_NAME'));
+		$data = Student::where('id=3')->field('name')->get();
+		//$data = Student::find(4);
+		p ($data);
 	}
 	public function add(){
 		//echo "home index add";

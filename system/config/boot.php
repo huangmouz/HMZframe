@@ -1,7 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 黄谋政
- * Date: 2018/3/23
- * Time: 14:45
- */
+return [
+	'CHARSET'=>'utf8',       //头部类型
+	'TIMEZONE'=>'PRC',       //时区
+];

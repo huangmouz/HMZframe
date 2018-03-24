@@ -9,7 +9,9 @@
 namespace app\admin\controller;
 
 
-class IndexController
+use hmz\core\Controller;
+
+class IndexController extends Controller
 {
 	public function index(){
 		echo "admin index index";

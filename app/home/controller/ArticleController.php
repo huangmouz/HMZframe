@@ -9,7 +9,9 @@
 namespace app\home\controller;
 
 
-class ArticleController
+use hmz\core\Controller;
+
+class ArticleController extends Controller
 {
 	public function index(){
 		echo "home article index";
