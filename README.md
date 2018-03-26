@@ -2,30 +2,41 @@ HMZframe
 =======
 框架学习过程
 
-##第一天
+第一天
+-------
 composer的下载与配置，各级目录的分配，Boot类的测试。
 
-##第二天
+第二天
+-------
 公共控制器Controller类，用于其他的类继承，自动加载模板类View，用来加载模板和自动分配变量到页面，数据库链接处理类Model，用来链接数据库并查询处理数据库中的数据
 
-##第三天
+第三天
+-------
 c函数，配置config，完善model类
 
-##第四天
-继续完善model类，composer下载whoop错误提示
+第四天
+-------
+继续完善model类，composer下载whoop错误提示，打包提交
 
-####composer配置
+composer配置
+-------
+登录composer中文网，点击下载，然后按指示安装
+
 ####目录结构
 ```
 fream 框架主目录
 |--app/
-|  |--app/admin 后台的东西
-|  |--app/home 前台的东西
+|  |--app/home/ 前台的东西
+|  |  |--app/home/controller/ 控制器目录
+|  |  |--app/home/view/ 模板目录
 |--hmz/
 |--public/ 公共目录，主要用于存储公共资源，静态资源类
 |--system/ 系统核心目录，主要存储配置项文件和框架运行必需的方法和设置
 |--vendor/ composer插件目录，由composer配置项自动生成，不能修改，不需处理
+|--.gitignore git忽视上传名单
 |--composer.json composer的配置项
+|--composer.lock composer日志
+
 ```
 ####核心类库`core`
 ```
