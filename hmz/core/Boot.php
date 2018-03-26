@@ -22,6 +22,8 @@ class Boot
 	 */
 	public static function run ()
 	{
+		//错误处理方法
+		self::handler ();
 		//echo 1;
 		//在public/index里调试出打印的数据
 		//初始化框架
@@ -74,5 +76,10 @@ class Boot
 		//组装需要的路径，因为加入了命名空间的概念，所以现在需要将命名空间也组起来
 		$controller = '\app\\' . $m . '\controller\\' . ucfirst ( $c ) . 'Controller';
 		echo call_user_func_array ( [ new $controller , $a ] , [] );
+	}
+	public static function handler(){
+		$whoops = new \Whoops\Run;
+		$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+		$whoops->register();
 	}
 }

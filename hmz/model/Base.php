@@ -22,46 +22,53 @@ class Base
 	/**
 	 * @var null 静态链接数据库所用，保存链接状态，以免多次链接
 	 */
-	private static $pdo    = null;
+	private static $pdo = null;
 	/**
-	 * @var string 表名，由
+	 * @var string 表名，由Model类里的get_called_class方法传过来
 	 */
 	private $table;
 	/**
-	 * @var string
+	 * @var string 接收传过来的参数用于where查找方法
 	 */
-	private $where  = '';
+	private $where = '';
 	/**
-	 * @var string
+	 * @var string 接收传过来的参数用于order排序方法
 	 */
-	private $order  = '';
+	private $order = '';
 	/**
-	 * @var string
+	 * @var string 接收传过来的参数用于规定查找类型方法
 	 */
-	private $field  = '*';
+	private $field = '*';
 	/**
-	 * @var string
+	 * @var string 接收传过来的参数用于截取方法
 	 */
-	private $limit  = '';
+	private $limit = '';
 	/**
-	 * @var string
+	 * @var string 接收传过来的参数用于having方法
 	 */
 	private $having = '';
+	private $group  = '';
+	private $join   = '';
 
 	/**
+	 * 构造函数 用于在方法调用之前触发
 	 * Base constructor.
 	 *
-	 * @param $class
+	 * @param $class 表名
 	 *
 	 * @throws Exception
 	 */
 	public function __construct ( $class )
 	{
+		//链接数据库
 		$this->connect ();
+		//处理传过来的参数，处理成需要的表名
 		$this->table = strtolower ( ltrim ( strrchr ( $class , '\\' ) , '\\' ) );
 	}
 
 	/**
+	 * 链接数据库方法
+	 *
 	 * @throws Exception
 	 */
 	public function connect ()
@@ -81,9 +88,11 @@ class Base
 	}
 
 	/**
-	 * @param $sql
+	 * 执行有结果集的方法
 	 *
-	 * @return mixed
+	 * @param $sql sql语句
+	 *
+	 * @return mixed 返出获得的结果
 	 * @throws Exception
 	 */
 	public function query ( $sql )
@@ -98,48 +107,68 @@ class Base
 	}
 
 	/**
-	 * @param $sql
+	 * 执行无结果集的方法
 	 *
-	 * @return mixed
+	 * @param $sql sql语句
+	 *
+	 * @return mixed 返出受影响的条数
 	 * @throws Exception
 	 */
 	public function exec ( $sql )
 	{
 		try {
-			return self::$pdo->exec ( '$sql' );
+			return self::$pdo->exec ( $sql );
 		} catch ( Exception $e ) {
 			throw new Exception( $e->getMessage () );
 		}
 	}
 
 	/**
-	 * @param $pri
+	 * 根据主键获取单一数据
 	 *
-	 * @return mixed
+	 * @param $pri 主键
+	 *
+	 * @return mixed 返出查找到的数据
 	 * @throws Exception
 	 */
 	public function find ( $pri )
 	{
 		$priField = $this->getPriField ();
-		$sql      = 'select * from ' . $this->table . ' where ' . $priField . '=' . $pri;
+		$sql      = 'select ' . $this->field . ' from ' . $this->table . ' where ' . $priField . '=' . $pri;
 
 		return current ( $this->query ( $sql ) );
 	}
 
 	/**
-	 * @return mixed
-	 * @throws Exception
+	 * 多表关联方法
+	 *
+	 * @param $table 表名
+	 * @param $a     a表关联属性
+	 * @param $b     b表关联属性
 	 */
-	public function get ()
+	public function join ( $table , $a , $b )
 	{
-		$sql = 'select ' . $this->field . ' from ' . $this->table . $this->where . $this->order . $this->limit;
-
-		p ( $sql );
-
-		return $this->query ( $sql );
+		$this->join = $table ? ' join on ' . $table . ' at ' . $a . '=' . $b : '';
+		return $this;
 	}
 
 	/**
+	 * 获取指定列数据方法
+	 *
+	 * @param $field
+	 *
+	 * @return $this
+	 */
+	public function field ( $field )
+	{
+		$this->field = $field;
+
+		return $this;
+	}
+
+	/**
+	 * 查询where条件
+	 *
 	 * @param $where
 	 *
 	 * @return $this
@@ -152,6 +181,8 @@ class Base
 	}
 
 	/**
+	 * 排序方法
+	 *
 	 * @param $order
 	 *
 	 * @return $this
@@ -165,26 +196,22 @@ class Base
 	}
 
 	/**
-	 * @param $field
+	 * 分组方法
+	 *
+	 * @param $group
 	 *
 	 * @return $this
 	 */
-	public function field ( $field )
+	public function groupBy ( $group )
 	{
-		$this->field = $field;
+		$this->group = $group ? ' group by ' . $group : '';
 
 		return $this;
 	}
 
 	/**
-	 * @param $limit
-	 */
-	public function limit ( $limit )
-	{
-		$this->limit = $limit ? ' limit ' . $limit : '';
-	}
-
-	/**
+	 * groupBy后在使用的方法
+	 *
 	 * @param $having
 	 */
 	public function having ( $having )
@@ -193,6 +220,94 @@ class Base
 	}
 
 	/**
+	 * 截取方法
+	 *
+	 * @param $limit
+	 */
+	public function limit ( $limit )
+	{
+		$this->limit = $limit ? ' limit ' . $limit : '';
+	}
+
+	/**
+	 * 获取所有的数据
+	 *
+	 * @return mixed 返出数据
+	 * @throws Exception
+	 */
+	public function get ()
+	{
+		$sql = 'select ' . $this->field . ' from ' . $this->table .$this->join. $this->where . $this->group . $this->having .
+			   $this->order . $this->limit;
+
+		p ( $sql );die;
+
+		return $this->query ( $sql );
+	}
+
+	/**
+	 * 截取第一条
+	 */
+	public function first(){
+		$sql = 'select ' . $this->field . ' from ' . $this->table .$this->join. $this->where . $this->group . $this->having .
+			   $this->order . ' limit 1';
+
+		return $this->query ( $sql );
+	}
+
+	/**
+	 * 写入数据方法
+	 * @param $data
+	 *
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function insert( $data ){
+		$fields = '';
+		$values = '';
+		//循环数据，将数据处理成sql需要的形式
+		foreach ($data as $k=>$v){
+			$fields .= $k . ',';
+			$values .= is_int ($v) ? $v .',':"'$v'".',';
+		}
+		$fields = rtrim ($fields,',');
+		$values = rtrim ($values,',');
+		$sql = 'insert into'.$this->table.'('.$fields.') values ('.$values.')';
+		return $this->exec ($sql);
+	}
+
+	/**
+	 * 更新数据方法
+	 * @param $data
+	 *
+	 * @return bool|mixed
+	 * @throws Exception
+	 */
+	public function update( $data ){
+		if (!$this->where) return false;
+		$fields = '';
+		foreach ($data as $k=>$v){
+			$fields .= $k .'='.(is_int ($v)?$v:"'$v'") .',';
+		}
+		$fields = rtrim ($fields,',');
+		$sql = 'update '.$this->table.' set '.$fields .$this->where;
+		p ($sql);die('语句正确的话就去hmz/model/base里的update方法注释掉die');
+		return $this->exec ($sql);
+	}
+
+	/**
+	 * 数据删除方法
+	 */
+	public function delete(){
+		if (!$this->where) return false;
+		$sql = 'delete from '.$this->table.$this->where;
+		p ($sql);die('语句正确的话就去hmz/model/base里的delete方法注释掉die');
+		return $this->exec ($sql);
+	}
+
+	/**
+	 * 获取主键ID方法
+	 *
 	 * @return mixed
 	 * @throws Exception
 	 */

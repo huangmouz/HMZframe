@@ -8,7 +8,9 @@
             "email": "pkweng@qq.com"
         }
     ],
-    "require": {},
+    "require": {
+        "filp/whoops": "^2.1"
+    },
     "autoload":{
         "files":[
             "system/helper.php"

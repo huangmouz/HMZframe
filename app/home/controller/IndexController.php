@@ -28,8 +28,10 @@ class IndexController extends Controller
 		//p(c ());
 		//p (c('database'));
 		//p (c('database.DB_NAME'));
-		$data = Student::where('id=3')->field('name')->get();
+		//$data = Student::where('id=3')->field('name')->groupBy('name')->join('age',1,1)->get();
+		$data = Student::where('name=1')->delete();
 		//$data = Student::find(4);
+		//sdfas//我是搞事情的
 		p ($data);
 	}
 	public function add(){
